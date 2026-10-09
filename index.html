@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IoT Smart Vehicle Monitoring & Safety System</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c14;
+    --bg2: #0d1420;
+    --bg3: #111b2e;
+    --card: #0f1a2e;
+    --card2: #152035;
+    --accent: #00d4ff;
+    --accent2: #0099cc;
+    --green: #00ff88;
+    --orange: #ff8c00;
+    --red: #ff3355;
+    --yellow: #ffcc00;
+    --text: #e8f4ff;
+    --muted: #6b8ab0;
+    --border: rgba(0,212,255,0.15);
+    --glow: 0 0 20px rgba(0,212,255,0.3);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  section, header, footer, nav { position: relative; z-index: 1; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: rgba(8,12,20,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+
+  .nav-logo {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700; font-size: 1.1rem;
+    color: var(--accent);
+    letter-spacing: 1px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .nav-logo span { color: var(--text); }
+
+  .nav-links {
+    display: flex; gap: 1.8rem; list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.82rem; font-weight: 500;
+    color: var(--muted); text-decoration: none;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  .hamburger { display: none; cursor: pointer; flex-direction: column; gap: 5px; }
+  .hamburger span { width: 22px; height: 2px; background: var(--accent); display: block; transition: all 0.3s; }
+
+  /* HEADER */
+  header {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 80px 2rem 4rem;
+    text-align: center;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(0,100,180,0.15) 0%, transparent 70%);
+  }
+
+  .header-inner { max-width: 860px; }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.25);
+    border-radius: 999px;
+    padding: 5px 16px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem; color: var(--accent);
+    letter-spacing: 1px; text-transform: uppercase;
+    margin-bottom: 2rem;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .pulse-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green);
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity:1; box-shadow: 0 0 0 0 rgba(0,255,136,0.6); }
+    50% { opacity:0.6; box-shadow: 0 0 0 6px rgba(0,255,136,0); }
+  }
+
+  h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 700; line-height: 1.1;
+    background: linear-gradient(135deg, #fff 30%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1.2rem;
+    animation: fadeUp 0.7s 0.2s ease both;
+  }
+
+  .subtitle {
+    font-size: clamp(0.95rem, 2vw, 1.2rem);
+    color: var(--muted); line-height: 1.7;
+    max-width: 620px; margin: 0 auto 2.5rem;
+    animation: fadeUp 0.7s 0.4s ease both;
+  }
+
+  .hero-btns {
+    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+    animation: fadeUp 0.7s 0.6s ease both;
+  }
+
+  .btn {
+    padding: 12px 28px;
+    border-radius: 6px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600; font-size: 1rem;
+    letter-spacing: 0.5px;
+    cursor: pointer; text-decoration: none;
+    transition: all 0.25s;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    box-shadow: 0 0 24px rgba(0,212,255,0.35);
+  }
+
+  .btn-primary:hover {
+    background: #33dfff;
+    box-shadow: 0 0 36px rgba(0,212,255,0.55);
+    transform: translateY(-2px);
+  }
+
+  .btn-outline {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--text);
+  }
+
+  .btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .hero-stats {
+    display: flex; gap: 2.5rem; justify-content: center; flex-wrap: wrap;
+    margin-top: 4rem;
+    animation: fadeUp 0.7s 0.8s ease both;
+  }
+
+  .stat-item { text-align: center; }
+
+  .stat-num {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 2rem; font-weight: 700;
+    color: var(--accent);
+  }
+
+  .stat-label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeDown { from { opacity:0; transform:translateY(-12px); } to { opacity:1; transform:translateY(0); } }
+
+  /* SECTIONS */
+  section { padding: 5rem 2rem; }
+
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+
+  .section-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem; color: var(--accent);
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 0.6rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .section-tag::before {
+    content: '';
+    width: 24px; height: 1px; background: var(--accent);
+  }
+
+  .section-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    font-weight: 700; line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  .section-desc {
+    color: var(--muted); font-size: 1rem; line-height: 1.75;
+    max-width: 640px; margin-bottom: 3rem;
+  }
+
+  /* PROBLEM */
+  #problem { background: var(--bg); }
+
+  .problem-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .problem-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    position: relative; overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+
+  .problem-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255,51,85,0.4);
+  }
+
+  .problem-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--red);
+  }
+
+  .card-icon {
+    font-size: 2rem; margin-bottom: 1rem;
+  }
+
+  .card-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.2rem; font-weight: 600;
+    margin-bottom: 0.7rem;
+  }
+
+  .card-text { color: var(--muted); font-size: 0.9rem; line-height: 1.65; }
+
+  /* SOLUTION */
+  #solution { background: var(--bg2); }
+
+  .solution-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .solution-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    position: relative; overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .solution-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(0,212,255,0.35);
+    box-shadow: var(--glow);
+  }
+
+  .solution-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--green));
+  }
+
+  .sos-card { background: linear-gradient(135deg, #1a0812, #200f18); }
+  .sos-card:hover { border-color: rgba(255,51,85,0.5); box-shadow: 0 0 20px rgba(255,51,85,0.2); }
+  .sos-card::before { background: var(--red); }
+
+  /* OPPORTUNITY */
+  #opportunity { background: var(--bg); }
+
+  .opp-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .opp-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.8rem;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .opp-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 32px rgba(0,212,255,0.1);
+  }
+
+  .opp-icon {
+    width: 54px; height: 54px;
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; margin: 0 auto 1rem;
+  }
+
+  /* DASHBOARD */
+  #dashboard {
+    background: var(--bg2);
+    background-image: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(0,80,160,0.12) 0%, transparent 70%);
+  }
+
+  .dash-controls {
+    display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;
+  }
+
+  .sim-status {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem; color: var(--muted);
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .sim-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--muted);
+    transition: background 0.3s;
+  }
+
+  .sim-dot.active { background: var(--green); animation: pulse 1.5s infinite; }
+
+  .gauge-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem; margin-bottom: 2rem;
+  }
+
+  .gauge-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    transition: border-color 0.3s;
+  }
+
+  .gauge-card.alert-card { border-color: var(--red) !important; box-shadow: 0 0 16px rgba(255,51,85,0.2); }
+  .gauge-card.warn-card { border-color: var(--orange) !important; box-shadow: 0 0 16px rgba(255,140,0,0.2); }
+
+  /* ── OVERSPEED STATES ── */
+  .gauge-card.overspeed-warn {
+    border-color: var(--orange) !important;
+    box-shadow: 0 0 20px rgba(255,140,0,0.35) !important;
+  }
+
+  .gauge-card.overspeed-critical {
+    border-color: var(--red) !important;
+    animation: speedCardFlash 0.6s infinite;
+  }
+
+  @keyframes speedCardFlash {
+    0%,100% { box-shadow: 0 0 24px rgba(255,51,85,0.55); border-color: var(--red) !important; }
+    50%  { box-shadow: 0 0 52px rgba(255,51,85,0.9); border-color: rgba(255,51,85,0.4) !important; }
+  }
+
+  /* Animated warning icon next to speed label */
+  .speed-warn-icon {
+    display: inline-block;
+    animation: iconBounce 0.5s infinite alternate;
+    margin-left: 4px;
+    font-size: 0.9rem;
+  }
+
+  @keyframes iconBounce {
+    from { transform: scale(1) rotate(-8deg); }
+    to   { transform: scale(1.25) rotate(8deg); }
+  }
+
+  /* ── OVERSPEED POPUP ── */
+  #overspeedPopup {
+    position: fixed;
+    top: 80px; left: 50%; transform: translateX(-50%) translateY(-20px);
+    z-index: 9999;
+    min-width: 320px; max-width: 90vw;
+    background: linear-gradient(135deg, #1a0008, #2a0010);
+    border: 2px solid var(--red);
+    border-radius: 14px;
+    padding: 1.1rem 1.6rem;
+    display: flex; align-items: center; gap: 14px;
+    box-shadow: 0 0 48px rgba(255,51,85,0.55);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  #overspeedPopup.show {
+    opacity: 1; pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .popup-icon {
+    font-size: 2rem;
+    animation: iconBounce 0.45s infinite alternate;
+    flex-shrink: 0;
+  }
+
+  .popup-body { flex: 1; }
+
+  .popup-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.15rem; font-weight: 700;
+    color: var(--red); letter-spacing: 0.5px;
+    line-height: 1.2;
+  }
+
+  .popup-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem; color: rgba(255,100,120,0.8);
+    margin-top: 2px;
+  }
+
+  .popup-speed {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.6rem; font-weight: 700;
+    color: var(--red); flex-shrink: 0;
+  }
+
+  /* speed value colour transition helper */
+  .gauge-value { transition: color 0.4s ease; }
+
+  .gauge-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .gauge-label {
+    font-size: 0.78rem; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .gauge-icon { font-size: 1rem; }
+
+  .gauge-status {
+    font-size: 0.7rem; padding: 2px 10px;
+    border-radius: 999px;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .status-ok { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.2); }
+  .status-warn { background: rgba(255,140,0,0.1); color: var(--orange); border: 1px solid rgba(255,140,0,0.3); }
+  .status-alert { background: rgba(255,51,85,0.1); color: var(--red); border: 1px solid rgba(255,51,85,0.3); animation: flashBorder 0.8s infinite; }
+
+  @keyframes flashBorder { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+
+  .gauge-value {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 2.6rem; font-weight: 700;
+    line-height: 1;
+  }
+
+  .gauge-unit { font-size: 1rem; color: var(--muted); font-weight: 400; }
+
+  .gauge-bar-track {
+    background: rgba(255,255,255,0.06);
+    border-radius: 999px;
+    height: 6px; margin-top: 1rem;
+    overflow: hidden;
+  }
+
+  .gauge-bar-fill {
+    height: 100%; border-radius: 999px;
+    transition: width 0.8s ease, background 0.5s;
+  }
+
+  .alerts-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.5rem;
+  }
+
+  .alerts-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.1rem; font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .alert-list { display: flex; flex-direction: column; gap: 0.6rem; min-height: 80px; }
+
+  .alert-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: 8px;
+    font-size: 0.88rem;
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn { from { opacity:0; transform:translateX(-10px); } to { opacity:1; transform:translateX(0); } }
+
+  .alert-item.alert { background: rgba(255,51,85,0.1); border: 1px solid rgba(255,51,85,0.2); color: var(--red); }
+  .alert-item.warn { background: rgba(255,140,0,0.1); border: 1px solid rgba(255,140,0,0.2); color: var(--orange); }
+  .alert-item.ok { background: rgba(0,255,136,0.06); border: 1px solid rgba(0,255,136,0.15); color: var(--green); }
+
+  .no-alerts { color: var(--muted); font-size: 0.88rem; }
+
+  /* SOS PANEL */
+  .sos-panel {
+    background: linear-gradient(135deg, #1a0812, #200f18);
+    border: 1px solid rgba(255,51,85,0.25);
+    border-radius: 14px; padding: 1.5rem 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .sos-info h3 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.3rem; font-weight: 700; color: var(--red);
+    margin-bottom: 0.3rem;
+  }
+
+  .sos-info p { font-size: 0.88rem; color: var(--muted); }
+
+  .sos-btn {
+    padding: 12px 30px;
+    background: var(--red);
+    border: none; border-radius: 8px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700; font-size: 1.1rem;
+    color: white; cursor: pointer;
+    letter-spacing: 1px;
+    box-shadow: 0 0 24px rgba(255,51,85,0.4);
+    transition: all 0.25s;
+    animation: sosPulse 2s infinite;
+  }
+
+  @keyframes sosPulse {
+    0%,100% { box-shadow: 0 0 24px rgba(255,51,85,0.4); }
+    50% { box-shadow: 0 0 40px rgba(255,51,85,0.7); }
+  }
+
+  .sos-btn:hover { transform: scale(1.05); background: #ff1a3a; }
+
+  .sos-sent {
+    display: flex; align-items: center; gap: 8px;
+    color: var(--green); font-size: 0.9rem;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  /* FEATURES */
+  #features { background: var(--bg); }
+
+  .features-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .feature-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 2rem;
+    display: flex; flex-direction: column; gap: 0.8rem;
+    transition: all 0.3s;
+    position: relative; overflow: hidden;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(0,212,255,0.3);
+    box-shadow: 0 8px 32px rgba(0,212,255,0.08);
+  }
+
+  .feature-card::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s;
+  }
+
+  .feature-card:hover::after { transform: scaleX(1); }
+
+  .feature-icon {
+    font-size: 1.8rem; width: 50px; height: 50px;
+    background: rgba(0,212,255,0.07);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .feature-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.15rem; font-weight: 600;
+  }
+
+  .feature-desc { color: var(--muted); font-size: 0.88rem; line-height: 1.6; }
+
+  /* FOOTER */
+  footer {
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 2rem;
+    text-align: center;
+  }
+
+  .footer-logo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.3rem; font-weight: 700;
+    color: var(--accent); margin-bottom: 0.5rem;
+  }
+
+  .footer-sub { color: var(--muted); font-size: 0.85rem; }
+
+  /* MOBILE */
+  @media (max-width: 700px) {
+    .nav-links { display: none; flex-direction: column; position: absolute; top: 60px; left: 0; right: 0; background: var(--bg2); padding: 1rem 2rem; gap: 1rem; border-bottom: 1px solid var(--border); }
+    .nav-links.open { display: flex; }
+    .hamburger { display: flex; }
+    .hero-stats { gap: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    🚗 <span>SmartDrive IoT</span>
+  </div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#solution">Solution</a></li>
+    <li><a href="#opportunity">Opportunity</a></li>
+    <li><a href="#dashboard">Dashboard</a></li>
+    <li><a href="#features">Features</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HEADER -->
+<header id="home">
+  <div class="header-inner">
+    <div class="badge"><div class="pulse-dot"></div>IoT-Powered · Real-Time · Smart Safety</div>
+    <h1>IoT-Based Smart Vehicle<br>Monitoring & Safety System</h1>
+    <p class="subtitle">Real-Time Vehicle Monitoring for Safety and Smart Transportation — keeping drivers, passengers, and families connected and protected.</p>
+    <div class="hero-btns">
+      <a href="#dashboard" class="btn btn-primary">View Live Dashboard</a>
+      <a href="#solution" class="btn btn-outline">Learn More</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="stat-num">4+</div><div class="stat-label">IoT Sensors</div></div>
+      <div class="stat-item"><div class="stat-num">24/7</div><div class="stat-label">Monitoring</div></div>
+      <div class="stat-item"><div class="stat-num">&lt;2s</div><div class="stat-label">SOS Alert Time</div></div>
+      <div class="stat-item"><div class="stat-num">3×</div><div class="stat-label">Emergency Contacts</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-inner">
+    <div class="section-tag">The Problem</div>
+    <h2 class="section-title">Why Vehicles Need<br>Smart Monitoring</h2>
+    <p class="section-desc">Road accidents and unexpected breakdowns are rising. The root causes are preventable — if only vehicle owners had the right data in time.</p>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="card-icon">💥</div>
+        <div class="card-title">Rising Road Accidents</div>
+        <p class="card-text">Road accidents continue to surge globally, largely driven by overspeeding and lack of real-time vehicle condition awareness during critical moments.</p>
+      </div>
+      <div class="problem-card">
+        <div class="card-icon">🔧</div>
+        <div class="card-title">Unexpected Breakdowns</div>
+        <p class="card-text">Poor preventive maintenance leads to sudden failures on the road — engine problems, dead batteries, and empty fuel tanks that could have been predicted.</p>
+      </div>
+      <div class="problem-card">
+        <div class="card-icon">📵</div>
+        <div class="card-title">No Live Vehicle Data</div>
+        <p class="card-text">Parents and vehicle owners have zero access to live vehicle health data, leaving them unaware of dangerous conditions or risky driving behaviour.</p>
+      </div>
+      <div class="problem-card">
+        <div class="card-icon">⏳</div>
+        <div class="card-title">Delayed Emergency Response</div>
+        <p class="card-text">When accidents happen, the delay in notifying emergency services and family members can mean the difference between life and death.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section id="solution">
+  <div class="section-inner">
+    <div class="section-tag">The Solution</div>
+    <h2 class="section-title">A Connected, Intelligent<br>Safety Platform</h2>
+    <p class="section-desc">Our IoT system gives real-time visibility into every critical vehicle parameter — and acts instantly when it matters most.</p>
+    <div class="solution-grid">
+      <div class="solution-card">
+        <div class="card-icon">⛽</div>
+        <div class="card-title">Fuel Level Tracking</div>
+        <p class="card-text">Continuous fuel monitoring with low-level alerts prevents unexpected stops and enables smart refuelling planning.</p>
+      </div>
+      <div class="solution-card">
+        <div class="card-icon">🔋</div>
+        <div class="card-title">Battery Condition</div>
+        <p class="card-text">Real-time battery health analytics detect degradation early, preventing unexpected power failures on the road.</p>
+      </div>
+      <div class="solution-card">
+        <div class="card-icon">🔩</div>
+        <div class="card-title">Engine Health</div>
+        <p class="card-text">IoT sensors monitor engine temperature, RPM, and performance metrics to flag issues before they escalate into costly repairs.</p>
+      </div>
+      <div class="solution-card">
+        <div class="card-icon">📡</div>
+        <div class="card-title">Speed Monitoring</div>
+        <p class="card-text">Live speed tracking with configurable overspeed alerts promotes safe driving habits and compliance with speed limits.</p>
+      </div>
+      <div class="solution-card sos-card">
+        <div class="card-icon">🚨</div>
+        <div class="card-title">Automatic SOS Alerts</div>
+        <p class="card-text">On accident detection, the system instantly dispatches SOS alerts to ambulance, police, and family members — with GPS location — in under 2 seconds.</p>
+      </div>
+      <div class="solution-card">
+        <div class="card-icon">📲</div>
+        <div class="card-title">Remote Visibility</div>
+        <p class="card-text">Parents and fleet owners access live dashboards from anywhere — full visibility into vehicle health and driving behaviour at all times.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OPPORTUNITY -->
+<section id="opportunity">
+  <div class="section-inner">
+    <div class="section-tag">Opportunity</div>
+    <h2 class="section-title">Building a Safer,<br>Smarter Future</h2>
+    <p class="section-desc">Beyond safety, our system enables a broader transformation in how people relate to their vehicles and the roads they share.</p>
+    <div class="opp-grid">
+      <div class="opp-card">
+        <div class="opp-icon">🛡️</div>
+        <div class="card-title">Responsible Driving</div>
+        <p class="card-text">Speed alerts and behaviour insights promote accountability behind the wheel, reducing reckless driving.</p>
+      </div>
+      <div class="opp-card">
+        <div class="opp-icon">🔍</div>
+        <div class="card-title">Preventive Maintenance</div>
+        <p class="card-text">Early warnings allow timely repairs, extending vehicle lifespan and reducing costly emergency fixes.</p>
+      </div>
+      <div class="opp-card">
+        <div class="opp-icon">📉</div>
+        <div class="card-title">Fewer Accidents</div>
+        <p class="card-text">Informed drivers and instant alerts combine to reduce accident frequency and severity on roads.</p>
+      </div>
+      <div class="opp-card">
+        <div class="opp-icon">🌱</div>
+        <div class="card-title">Smart Transportation</div>
+        <p class="card-text">Supports sustainable and efficient transport ecosystems as part of smart city infrastructure.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard">
+  <div class="section-inner">
+    <div class="section-tag">Live Dashboard</div>
+    <h2 class="section-title">Real-Time Vehicle<br>Telemetry</h2>
+    <p class="section-desc">Simulated live sensor data. Press Start Simulation to watch the dashboard respond to changing vehicle conditions.</p>
+
+    <div class="dash-controls">
+      <button class="btn btn-primary" id="simBtn" onclick="toggleSim()">▶ Start Simulation</button>
+      <div class="sim-status">
+        <div class="sim-dot" id="simDot"></div>
+        <span id="simStatusText">Simulation paused</span>
+      </div>
+    </div>
+
+    <div class="gauge-grid">
+      <!-- Speed -->
+      <div class="gauge-card" id="speedCard">
+        <div class="gauge-header">
+          <div class="gauge-label"><span class="gauge-icon">🏎️</span> Speed</div>
+          <div class="gauge-status status-ok" id="speedStatus">NORMAL</div>
+        </div>
+        <div class="gauge-value" id="speedVal" style="color:var(--accent)">0 <span class="gauge-unit">km/h</span></div>
+        <div class="gauge-bar-track"><div class="gauge-bar-fill" id="speedBar" style="width:0%;background:var(--accent)"></div></div>
+      </div>
+      <!-- Fuel -->
+      <div class="gauge-card" id="fuelCard">
+        <div class="gauge-header">
+          <div class="gauge-label"><span class="gauge-icon">⛽</span> Fuel Level</div>
+          <div class="gauge-status status-ok" id="fuelStatus">NORMAL</div>
+        </div>
+        <div class="gauge-value" id="fuelVal" style="color:var(--green)">85 <span class="gauge-unit">%</span></div>
+        <div class="gauge-bar-track"><div class="gauge-bar-fill" id="fuelBar" style="width:85%;background:var(--green)"></div></div>
+      </div>
+      <!-- Battery -->
+      <div class="gauge-card" id="battCard">
+        <div class="gauge-header">
+          <div class="gauge-label"><span class="gauge-icon">🔋</span> Battery</div>
+          <div class="gauge-status status-ok" id="battStatus">NORMAL</div>
+        </div>
+        <div class="gauge-value" id="battVal" style="color:var(--green)">12.6 <span class="gauge-unit">V</span></div>
+        <div class="gauge-bar-track"><div class="gauge-bar-fill" id="battBar" style="width:88%;background:var(--green)"></div></div>
+      </div>
+      <!-- Engine -->
+      <div class="gauge-card" id="engCard">
+        <div class="gauge-header">
+          <div class="gauge-label"><span class="gauge-icon">🔩</span> Engine Health</div>
+          <div class="gauge-status status-ok" id="engStatus">GOOD</div>
+        </div>
+        <div class="gauge-value" id="engVal" style="color:var(--green)">92 <span class="gauge-unit">%</span></div>
+        <div class="gauge-bar-track"><div class="gauge-bar-fill" id="engBar" style="width:92%;background:var(--green)"></div></div>
+      </div>
+    </div>
+
+    <!-- Alerts -->
+    <div class="alerts-box">
+      <div class="alerts-title">📋 System Alerts <span id="alertCount" style="font-size:0.75rem;color:var(--muted);font-family:'Share Tech Mono',monospace;">(0 active)</span></div>
+      <div class="alert-list" id="alertList">
+        <div class="no-alerts" id="noAlerts">✓ All systems nominal. No alerts at this time.</div>
+      </div>
+    </div>
+
+    <!-- SOS -->
+    <div class="sos-panel">
+      <div class="sos-info">
+        <h3>🚨 Emergency SOS System</h3>
+        <p>Accident detected? Instantly alert ambulance, police & family with GPS location.</p>
+      </div>
+      <button class="sos-btn" id="sosBtn" onclick="triggerSOS()">SEND SOS</button>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-inner">
+    <div class="section-tag">Features</div>
+    <h2 class="section-title">Everything You Need<br>in One System</h2>
+    <p class="section-desc">Comprehensive IoT-powered capabilities designed to protect drivers, prevent failures, and enable smarter roads.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📡</div>
+        <div class="feature-name">Real-Time Monitoring</div>
+        <p class="feature-desc">Continuous live data from fuel, battery, engine, and speed sensors — updated every second for instant awareness.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💥</div>
+        <div class="feature-name">Accident Detection</div>
+        <p class="feature-desc">Advanced accelerometer and impact sensors automatically detect collisions and trigger emergency protocols instantly.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🆘</div>
+        <div class="feature-name">SOS Emergency Alert</div>
+        <p class="feature-desc">Automated SOS dispatch to ambulance, police, and family contacts with real-time GPS coordinates in under 2 seconds.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌐</div>
+        <div class="feature-name">IoT Integration</div>
+        <p class="feature-desc">Seamlessly connects with cloud platforms, mobile apps, and smart city infrastructure via MQTT and REST APIs.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔔</div>
+        <div class="feature-name">Smart Alerts</div>
+        <p class="feature-desc">Context-aware notifications for overspeed, low fuel, battery warning, and engine anomalies — before they become crises.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <div class="feature-name">Analytics Dashboard</div>
+        <p class="feature-desc">Visual telemetry dashboards give owners and parents full visibility into vehicle health and driving history anytime.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">🚗 IoT Smart Vehicle Monitoring & Safety System</div>
+  <div class="footer-sub">© 2025 · Driving Safety Through Technology · Real-Time IoT Vehicle Intelligence</div>
+</footer>
+
+<!-- OVERSPEED POPUP -->
+<div id="overspeedPopup">
+  <div class="popup-icon" id="popupIcon">🚨</div>
+  <div class="popup-body">
+    <div class="popup-title" id="popupTitle">OVERSPEED! Slow Down Immediately</div>
+    <div class="popup-sub" id="popupSub">CRITICAL ALERT · VEHICLE SPEED EXCEEDED 120 km/h</div>
+  </div>
+  <div class="popup-speed" id="popupSpeed">— km/h</div>
+</div>
+
+<script>
+  // ─── Nav toggle ───────────────────────────────────────────────────────────
+  function toggleNav() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+
+  // ─── SIMULATION ───────────────────────────────────────────────────────────
+  let simRunning = false;
+  let simInterval = null;
+  let tick = 0;
+
+  let state = { speed: 0, fuel: 85, batt: 12.6, eng: 92 };
+
+  function toggleSim() {
+    simRunning = !simRunning;
+    const btn = document.getElementById('simBtn');
+    const dot = document.getElementById('simDot');
+    const txt = document.getElementById('simStatusText');
+    if (simRunning) {
+      btn.textContent = '⏹ Stop Simulation';
+      dot.classList.add('active');
+      txt.textContent = 'Live simulation running...';
+      simInterval = setInterval(simStep, 1200);
+    } else {
+      btn.textContent = '▶ Start Simulation';
+      dot.classList.remove('active');
+      txt.textContent = 'Simulation paused';
+      clearInterval(simInterval);
+    }
+  }
+
+  function simStep() {
+    tick++;
+    const phase = Math.floor(tick / 8) % 5;
+    if      (phase === 0) state.speed = Math.min(state.speed + rand(5, 12), 120);
+    else if (phase === 1) state.speed = clamp(state.speed + rand(-3, 3), 60, 100);
+    else if (phase === 2) state.speed = Math.min(state.speed + rand(4, 10), 145);
+    else if (phase === 3) state.speed = Math.max(state.speed - rand(6, 15), 0);
+    else                  state.speed = Math.max(state.speed - rand(2, 6), 0);
+
+    state.fuel = Math.max(state.fuel - rand(0.2, 0.8), 0);
+    state.batt = clamp(state.batt + rand(-0.1, 0.15), 10.5, 14.4);
+    state.eng  = clamp(state.eng  + rand(-1, 1), 55, 99);
+    updateDash();
+  }
+
+  function rand(min, max) { return Math.random() * (max - min) + min; }
+  function clamp(v, mn, mx) { return Math.max(mn, Math.min(mx, v)); }
+
+  // ─── AUDIO ENGINE ─────────────────────────────────────────────────────────
+  // Synthesise alert tones with Web Audio API — no external URLs, no CORS issues.
+  let audioCtx = null;
+  let beepOscillator = null;
+  let beepGain = null;
+  let beepRunning = false;
+
+  function getAudioCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtx;
+  }
+
+  function startAlertSound() {
+    if (beepRunning) return;
+    beepRunning = true;
+    const ctx = getAudioCtx();
+
+    beepGain = ctx.createGain();
+    beepGain.gain.setValueAtTime(0, ctx.currentTime);
+    beepGain.connect(ctx.destination);
+
+    beepOscillator = ctx.createOscillator();
+    beepOscillator.type = 'square';
+    beepOscillator.frequency.setValueAtTime(880, ctx.currentTime);
+    beepOscillator.connect(beepGain);
+    beepOscillator.start();
+
+    // Repeating beep pattern: 0.18 s ON / 0.18 s OFF
+    function scheduleBeeps() {
+      if (!beepRunning) return;
+      const now = ctx.currentTime;
+      beepGain.gain.cancelScheduledValues(now);
+      beepGain.gain.setValueAtTime(0, now);
+      for (let i = 0; i < 8; i++) {
+        beepGain.gain.linearRampToValueAtTime(0.4, now + i * 0.36 + 0.01);
+        beepGain.gain.setValueAtTime(0.4,  now + i * 0.36 + 0.17);
+        beepGain.gain.linearRampToValueAtTime(0, now + i * 0.36 + 0.18);
+      }
+      // reschedule before the 8 beeps finish
+      setTimeout(scheduleBeeps, 2600);
+    }
+    scheduleBeeps();
+  }
+
+  function stopAlertSound() {
+    if (!beepRunning) return;
+    beepRunning = false;
+    if (beepGain) {
+      beepGain.gain.cancelScheduledValues(audioCtx.currentTime);
+      beepGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.05);
+    }
+    if (beepOscillator) {
+      try { beepOscillator.stop(audioCtx.currentTime + 0.1); } catch(e) {}
+    }
+    beepOscillator = null;
+    beepGain = null;
+  }
+
+  // ─── POPUP ────────────────────────────────────────────────────────────────
+  let popupVisible = false;
+
+  function showOverspeedPopup(spd) {
+    const popup = document.getElementById('overspeedPopup');
+    document.getElementById('popupTitle').textContent = '🚨 OVERSPEED! Slow Down Immediately';
+    document.getElementById('popupSub').textContent   = 'CRITICAL ALERT · VEHICLE SPEED EXCEEDED 120 km/h';
+    document.getElementById('popupSpeed').textContent = spd + ' km/h';
+    if (!popupVisible) {
+      popup.classList.add('show');
+      popupVisible = true;
+    } else {
+      // just update speed number without re-triggering animation
+      void popup.offsetWidth;
+    }
+  }
+
+  function showWarnPopup(spd) {
+    // lightweight — only show popup for critical, keep warn in alert list only
+    hideOverspeedPopup();
+  }
+
+  function hideOverspeedPopup() {
+    if (popupVisible) {
+      document.getElementById('overspeedPopup').classList.remove('show');
+      popupVisible = false;
+    }
+  }
+
+  // ─── SPEED CARD OVERSPEED VISUAL ──────────────────────────────────────────
+  let lastSpeedState = 'ok'; // 'ok' | 'warn' | 'critical'
+
+  function applySpeedCardState(spd) {
+    const card  = document.getElementById('speedCard');
+    const label = document.querySelector('#speedCard .gauge-label');
+
+    // Remove previous overspeed classes
+    card.classList.remove('overspeed-warn', 'overspeed-critical', 'alert-card', 'warn-card');
+
+    // Remove old animated icon if present
+    const oldIcon = label.querySelector('.speed-warn-icon');
+    if (oldIcon) oldIcon.remove();
+
+    if (spd > 120) {
+      // CRITICAL
+      card.classList.add('overspeed-critical');
+      const ico = document.createElement('span');
+      ico.className = 'speed-warn-icon';
+      ico.textContent = '🚨';
+      label.appendChild(ico);
+      if (lastSpeedState !== 'critical') {
+        startAlertSound();
+        showOverspeedPopup(spd);
+        lastSpeedState = 'critical';
+      } else {
+        // just refresh popup speed number
+        document.getElementById('popupSpeed').textContent = spd + ' km/h';
+      }
+    } else if (spd > 90) {
+      // WARNING
+      card.classList.add('overspeed-warn');
+      const ico = document.createElement('span');
+      ico.className = 'speed-warn-icon';
+      ico.textContent = '⚠️';
+      label.appendChild(ico);
+      if (lastSpeedState === 'critical' || lastSpeedState === 'ok') {
+        stopAlertSound();
+        hideOverspeedPopup();
+        lastSpeedState = 'warn';
+      }
+    } else {
+      // NORMAL — clear everything
+      if (lastSpeedState !== 'ok') {
+        stopAlertSound();
+        hideOverspeedPopup();
+        lastSpeedState = 'ok';
+      }
+    }
+  }
+
+  // ─── CORE DASH UPDATE ─────────────────────────────────────────────────────
+  function updateDash() {
+    const spd  = Math.round(state.speed);
+    const spdPct = Math.min(spd / 140, 1);
+    const spdOverspeed = spd > 120;
+    const spdWarn      = spd > 90;
+
+    setGauge('speed', spd + ' <span class="gauge-unit">km/h</span>',
+      spdPct,
+      spdOverspeed ? 'alert' : spdWarn ? 'warn' : 'ok',
+      spdOverspeed ? 'OVERSPEED' : spdWarn ? 'HIGH' : 'NORMAL',
+      spdOverspeed ? 'var(--red)' : spdWarn ? 'var(--orange)' : 'var(--accent)',
+      'speedCard');
+
+    // Apply overspeed-specific card behaviours AFTER setGauge
+    applySpeedCardState(spd);
+
+    const fuel    = Math.round(state.fuel);
+    const fuelLow = fuel < 20, fuelWarn = fuel < 40;
+    setGauge('fuel', fuel + ' <span class="gauge-unit">%</span>',
+      fuel / 100,
+      fuelLow ? 'alert' : fuelWarn ? 'warn' : 'ok',
+      fuelLow ? 'CRITICAL' : fuelWarn ? 'LOW' : 'NORMAL',
+      fuelLow ? 'var(--red)' : fuelWarn ? 'var(--orange)' : 'var(--green)',
+      'fuelCard');
+
+    const battLow = state.batt < 11.5, battWarn = state.batt < 12.0;
+    setGauge('batt', state.batt.toFixed(1) + ' <span class="gauge-unit">V</span>',
+      (state.batt - 10) / 4.5,
+      battLow ? 'alert' : battWarn ? 'warn' : 'ok',
+      battLow ? 'CRITICAL' : battWarn ? 'LOW' : 'NORMAL',
+      battLow ? 'var(--red)' : battWarn ? 'var(--orange)' : 'var(--green)',
+      'battCard');
+
+    const eng    = Math.round(state.eng);
+    const engLow = eng < 65, engWarn = eng < 75;
+    setGauge('eng', eng + ' <span class="gauge-unit">%</span>',
+      eng / 100,
+      engLow ? 'alert' : engWarn ? 'warn' : 'ok',
+      engLow ? 'POOR' : engWarn ? 'FAIR' : 'GOOD',
+      engLow ? 'var(--red)' : engWarn ? 'var(--orange)' : 'var(--green)',
+      'engCard');
+
+    updateAlerts(spd, fuel, state.batt, eng);
+  }
+
+  function setGauge(id, valHtml, pct, statusClass, statusText, color, cardId) {
+    document.getElementById(id + 'Val').innerHTML = valHtml;
+    document.getElementById(id + 'Val').style.color = color;
+    document.getElementById(id + 'Bar').style.width = (pct * 100) + '%';
+    document.getElementById(id + 'Bar').style.background = color;
+    const statusEl = document.getElementById(id + 'Status');
+    statusEl.className = 'gauge-status status-' + statusClass;
+    statusEl.textContent = statusText;
+    // Base card classes (overspeed-specific classes are added by applySpeedCardState)
+    const card = document.getElementById(cardId);
+    if (cardId !== 'speedCard') {
+      card.classList.remove('alert-card', 'warn-card');
+      if (statusClass === 'alert') card.classList.add('alert-card');
+      else if (statusClass === 'warn') card.classList.add('warn-card');
+    }
+  }
+
+  function updateAlerts(spd, fuel, batt, eng) {
+    const newAlerts = [];
+
+    // Speed — enhanced messages
+    if (spd > 120) {
+      newAlerts.push({ type: 'alert', msg: '🚨 OVERSPEED — ' + spd + ' km/h exceeds 120 km/h limit!' });
+    } else if (spd > 90) {
+      newAlerts.push({ type: 'warn',  msg: '⚠️ High Speed Warning — ' + spd + ' km/h (limit 90 km/h)' });
+    }
+
+    if (fuel < 20) newAlerts.push({ type: 'alert', msg: '🚨 CRITICAL: Fuel critically low — ' + Math.round(fuel) + '% remaining' });
+    else if (fuel < 40) newAlerts.push({ type: 'warn', msg: '⚠️ Fuel low — ' + Math.round(fuel) + '% — please refuel soon' });
+
+    if (batt < 11.5) newAlerts.push({ type: 'alert', msg: '🚨 CRITICAL: Battery voltage critically low — ' + batt.toFixed(1) + 'V' });
+    else if (batt < 12.0) newAlerts.push({ type: 'warn', msg: '⚠️ Battery warning — ' + batt.toFixed(1) + 'V' });
+
+    if (eng < 65) newAlerts.push({ type: 'alert', msg: '🚨 ENGINE ALERT: Health degraded — ' + Math.round(eng) + '%' });
+    else if (eng < 75) newAlerts.push({ type: 'warn', msg: '⚠️ Engine health below optimal — ' + Math.round(eng) + '%' });
+
+    if (newAlerts.length === 0) newAlerts.push({ type: 'ok', msg: '✓ All systems nominal.' });
+
+    document.getElementById('noAlerts').style.display = 'none';
+    document.getElementById('alertList').innerHTML = newAlerts.map(a =>
+      `<div class="alert-item ${a.type}">${a.msg}</div>`
+    ).join('');
+    const count = newAlerts.filter(a => a.type !== 'ok').length;
+    document.getElementById('alertCount').textContent = '(' + count + ' active)';
+  }
+
+  // ─── SOS ──────────────────────────────────────────────────────────────────
+  function triggerSOS() {
+    const btn = document.getElementById('sosBtn');
+    btn.disabled = true;
+    btn.textContent = 'SENDING...';
+    btn.style.background = '#cc2244';
+    setTimeout(() => {
+      btn.style.display = 'none';
+      const panel = document.querySelector('.sos-panel');
+      const sent  = document.createElement('div');
+      sent.className = 'sos-sent';
+      sent.innerHTML = '✅ SOS Sent — Ambulance, Police & Family notified with GPS location. Help is on the way.';
+      panel.appendChild(sent);
+      setTimeout(() => {
+        btn.style.display = '';
+        btn.disabled = false;
+        btn.textContent = 'SEND SOS';
+        btn.style.background = '';
+        sent.remove();
+      }, 6000);
+    }, 1800);
+  }
+</script>
+</body>
+</html>

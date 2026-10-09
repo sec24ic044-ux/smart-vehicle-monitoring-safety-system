@@ -1,0 +1,4 @@
+timestamp,device_id,fuel_percent,battery_voltage_v,engine_temperature_c,speed_kmh,source
+2026-10-09T10:00:00Z,demo-vehicle-01,42,12.4,84,36,illustrative_sample
+2026-10-09T10:01:00Z,demo-vehicle-01,38,12.3,86,48,illustrative_sample
+2026-10-09T10:02:00Z,demo-vehicle-01,18,12.2,91,62,illustrative_sample
